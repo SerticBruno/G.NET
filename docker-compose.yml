@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  company.intro:
+    image: ${DOCKER_REGISTRY-}companyintro
+    build:
+      context: .
+      dockerfile: Company.Intro/Dockerfile
+    depends_on:
+      - mssql
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+volumes:
+  mssql-data:
