@@ -16,7 +16,7 @@ namespace Company.Intro
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             var app = builder.Build();
 
