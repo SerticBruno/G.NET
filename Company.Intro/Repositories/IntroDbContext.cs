@@ -12,5 +12,19 @@ namespace Company.Intro.Repositories
             : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.FirstName)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.LastName)
+                .IsRequired();
+        }
     }
 }
