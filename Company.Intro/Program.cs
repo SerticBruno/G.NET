@@ -1,5 +1,7 @@
-
+using Company.Intro.Repositories;
 using Company.Intro.Services;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.Intro
 {
@@ -17,6 +19,9 @@ namespace Company.Intro
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IUserService, UserService>();
+
+            builder.Services.AddDbContext<IntroDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
