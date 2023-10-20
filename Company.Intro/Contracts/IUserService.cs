@@ -1,6 +1,6 @@
 ﻿using Company.Intro.Models;
 
-namespace Company.Intro.Services
+namespace Company.Intro.Contracts
 {
     public interface IUserService
     {
