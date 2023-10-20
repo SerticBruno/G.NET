@@ -34,5 +34,12 @@ namespace Company.Intro.Controllers
             var user = await _userService.CreateUserAsync(userDTO);
             return Ok(user);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser(User userDTO)
+        {
+            var user = await _userService.UpdateUserAsync(userDTO);
+            return Ok(user);
+        }
     }
 }

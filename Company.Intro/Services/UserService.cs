@@ -25,10 +25,52 @@ namespace Company.Intro.Services
                 Age = user.Age
             };
 
+            if (_context is null)
+            {
+                throw new InvalidOperationException("Database context is not initialized.");
+            }
+
+            if (_context.Users is null)
+            {
+                throw new InvalidOperationException("Users DbSet is not initialized.");
+            }
+
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
             return newUser;
+        }
+
+        public async Task<User> UpdateUserAsync(User updatedUser)
+        {
+            if (_context is null)
+            {
+                throw new InvalidOperationException("Database context is not initialized.");
+            }
+
+            if (_context.Users is null)
+            {
+                throw new InvalidOperationException("Users DbSet is not initialized.");
+            }
+
+            var existingUser = await _context.Users.FindAsync(updatedUser.Id);
+
+            if (existingUser is null)
+            {
+                // Handle the case where the user to update does not exist.
+                // You can throw an exception or return an appropriate response.
+                throw new InvalidOperationException("User not found.");
+            }
+
+            // Update the user properties.
+            existingUser.FirstName = updatedUser.FirstName;
+            existingUser.LastName = updatedUser.LastName;
+            existingUser.Age = updatedUser.Age;
+
+            // Save the changes to the database.
+            await _context.SaveChangesAsync();
+
+            return existingUser;
         }
     }
 }
