@@ -1,6 +1,5 @@
-﻿using Company.Intro.Models;
-using Company.Intro.Repositories;
-using Company.Intro.Services;
+﻿using Company.Intro.Contracts;
+using Company.Intro.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Intro.Controllers
@@ -10,12 +9,10 @@ namespace Company.Intro.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IntroDbContext _context;
 
-        public UsersController(IUserService userService, IntroDbContext context)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
-            _context = context;
         }
 
         [HttpGet("{id}")]
@@ -28,6 +25,13 @@ namespace Company.Intro.Controllers
                 return NotFound();
             }
 
+            return Ok(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(User userDTO)
+        {
+            var user = await _userService.CreateUserAsync(userDTO);
             return Ok(user);
         }
     }
