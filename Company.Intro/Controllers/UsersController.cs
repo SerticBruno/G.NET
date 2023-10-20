@@ -1,4 +1,5 @@
 ﻿using Company.Intro.Models;
+using Company.Intro.Repositories;
 using Company.Intro.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,12 @@ namespace Company.Intro.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IntroDbContext _context;
 
-        public UsersController()
+        public UsersController(IUserService userService, IntroDbContext context)
         {
-            _userService = new UserService();
+            _userService = userService;
+            _context = context;
         }
 
         [HttpGet("{id}")]
