@@ -1,30 +1,34 @@
-﻿using Company.Intro.Models;
+﻿using Company.Intro.Contracts;
+using Company.Intro.Models;
+using Company.Intro.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.Intro.Services
 {
     public class UserService : IUserService
     {
-        public List<User> Users { get; set; }
+        public IntroDbContext _context { get; set; }
+        public DbSet<User>? Users { get; set; }
 
-        public UserService()
+        public UserService(IntroDbContext context)
         {
-            Users = new List<User>
+            _context = context;
+        }
+
+        public async Task<User> CreateUserAsync(User user)
+        {
+            var newUser = new User
             {
-                new User
-                {
-                    Id = Guid.NewGuid(),
-                    FirstName = "Dolly",
-                    LastName = "Pas",
-                    Age = 3,
-                },
-                new User
-                {
-                    Id = Guid.NewGuid(),
-                    FirstName = "Dobby",
-                    LastName = "Psic",
-                    Age = 4,
-                }
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Age = user.Age
             };
+
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+
+            return newUser;
         }
     }
 }
