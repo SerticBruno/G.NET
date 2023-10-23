@@ -41,5 +41,19 @@ namespace Company.Intro.Controllers
             var user = await _userService.UpdateUserAsync(userDTO);
             return Ok(user);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            bool result = await _userService.DeleteUserAsync(id);
+
+            if (result)
+            {
+                // user should be delete here
+                return Ok();
+            }
+
+            return NotFound();
+        }
     }
 }

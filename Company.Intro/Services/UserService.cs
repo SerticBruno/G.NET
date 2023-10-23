@@ -72,5 +72,33 @@ namespace Company.Intro.Services
 
             return existingUser;
         }
+
+        public async Task<bool> DeleteUserAsync(Guid userId)
+        {
+            if (_context is null)
+            {
+                throw new InvalidOperationException("Database context is not initialized.");
+            }
+
+            if (_context.Users is null)
+            {
+                throw new InvalidOperationException("Users DbSet is not initialized.");
+            }
+
+            var existingUser = await _context.Users.FindAsync(userId);
+
+            if (existingUser is null)
+            {
+                // Handle the case where the user to update does not exist.
+                // You can throw an exception or return an appropriate response.
+                throw new InvalidOperationException("User not found.");
+            }
+
+            _context.Users.Remove(existingUser);
+
+            int result = await _context.SaveChangesAsync();
+
+            return result == 1;
+        }
     }
 }

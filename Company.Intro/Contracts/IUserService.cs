@@ -8,5 +8,6 @@ namespace Company.Intro.Contracts
         public DbSet<User>? Users { get; set; }
         Task<User> CreateUserAsync(User user);
         Task<User> UpdateUserAsync(User user);
+        Task<bool> DeleteUserAsync(Guid id);
     }
 }
