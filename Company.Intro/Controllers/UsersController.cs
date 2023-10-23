@@ -18,13 +18,7 @@ namespace Company.Intro.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(Guid id)
         {
-            var user = _userService.Users.FirstOrDefault(u => u.Id == id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
+            var user = await _userService.GetUserAsync(id);
             return Ok(user);
         }
 

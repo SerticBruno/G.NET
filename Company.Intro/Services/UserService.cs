@@ -14,6 +14,27 @@ namespace Company.Intro.Services
         {
             _context = context;
         }
+        public async Task<User> GetUserAsync(Guid id)
+        {
+            if (_context is null)
+            {
+                throw new InvalidOperationException("Database context is not initialized.");
+            }
+
+            if (_context.Users is null)
+            {
+                throw new InvalidOperationException("Users DbSet is not initialized.");
+            }
+
+            var existingUser = await _context.Users.FindAsync(id);
+
+            if (existingUser is null)
+            {
+                throw new InvalidOperationException("User not found.");
+            }
+
+            return existingUser;
+        }
 
         public async Task<User> CreateUserAsync(User user)
         {
