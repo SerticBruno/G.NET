@@ -1,3 +1,4 @@
+using AutoMapper;
 using Company.Intro.Contracts;
 using Company.Intro.Repositories;
 using Company.Intro.Services;
@@ -15,6 +16,7 @@ namespace Company.Intro
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

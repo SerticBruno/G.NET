@@ -1,4 +1,5 @@
 ﻿using Company.Intro.Contracts;
+using Company.Intro.DTOs;
 using Company.Intro.Models;
 using Company.Intro.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,11 @@ namespace Company.Intro.Services
             _userRepository = userRepository;
         }
 
+        public IEnumerable<User> GetUsers()
+        {
+            return _userRepository.GetUsers();
+        }
+
         public IEnumerable<User> GetUsers(string firstName, string lastName, int skip, int take)
         {
             return _userRepository.GetUsers(firstName, lastName, skip, take);
@@ -22,6 +28,13 @@ namespace Company.Intro.Services
         public User GetUserById(Guid id)
         {
             return _userRepository.GetUserById(id);
+        }
+
+        public bool CreateUser(User user)
+        {
+            var userCreated = _userRepository.CreateUser(user);
+
+            return userCreated;
         }
     }
 }

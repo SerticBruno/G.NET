@@ -17,6 +17,11 @@ namespace Company.Intro.Repositories
             _context = context;
         }
 
+        public IEnumerable<User> GetUsers()
+        {
+            return _context.Users.ToList();
+        }
+
         public IEnumerable<User> GetUsers(string firstName, string lastName, int skip, int take)
         {
             return _context.Users
@@ -32,11 +37,12 @@ namespace Company.Intro.Repositories
             return _context.Users.Find(userId);
         }
 
-        public void InsertUser(User user)
+        public bool CreateUser(User user)
         {
             _context.Users.Add(user);
-        }
 
+            return Save();
+        }
 
         public void DeleteUser(int userId)
         {
@@ -49,9 +55,16 @@ namespace Company.Intro.Repositories
             _context.Entry(user).State = EntityState.Modified;
         }
 
-        public void Save()
+        public bool Save()
         {
-            _context.SaveChanges();
+            var saved = _context.SaveChanges();
+
+            if (saved > 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public virtual void Dispose(bool disposing)
