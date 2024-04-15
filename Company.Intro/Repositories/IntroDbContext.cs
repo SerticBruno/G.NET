@@ -6,12 +6,12 @@ namespace Company.Intro.Repositories
 {
     public class IntroDbContext : DbContext
     {
-        public DbSet<User>? Users { get; set; }
-
         public IntroDbContext(DbContextOptions<IntroDbContext> options)
             : base(options)
         {
         }
+
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

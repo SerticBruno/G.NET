@@ -20,6 +20,7 @@ namespace Company.Intro
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             builder.Services.AddDbContext<IntroDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

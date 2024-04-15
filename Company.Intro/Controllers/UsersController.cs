@@ -1,12 +1,14 @@
 ﻿using Company.Intro.Contracts;
 using Company.Intro.Models;
+using Company.Intro.Repositories;
+using Company.Intro.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Intro.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController : Controller
+    [Route("[controller]")]
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
 
@@ -15,39 +17,20 @@ namespace Company.Intro.Controllers
             _userService = userService;
         }
 
+        [HttpGet]
+        public ActionResult<IEnumerable<User>> Get([FromQuery] string firstName, [FromQuery] string lastName, [FromQuery] int skip = 0, [FromQuery] int take = 10)
+        {
+            var users = _userService.GetUsers(firstName, lastName, skip, take);
+            return Ok(users);
+        }   
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public ActionResult<User> GetById(Guid id)
         {
-            var user = await _userService.GetUserAsync(id);
+            var user = _userService.GetUserById(id);
+            if (user == null)
+                return NotFound();
             return Ok(user);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(User userDTO)
-        {
-            var user = await _userService.CreateUserAsync(userDTO);
-            return Ok(user);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateUser(User userDTO)
-        {
-            var user = await _userService.UpdateUserAsync(userDTO);
-            return Ok(user);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            bool result = await _userService.DeleteUserAsync(id);
-
-            if (result)
-            {
-                // user should be delete here
-                return Ok();
-            }
-
-            return NotFound();
         }
     }
 }
