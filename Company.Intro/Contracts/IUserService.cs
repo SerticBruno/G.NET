@@ -10,5 +10,6 @@ namespace Company.Intro.Contracts
         IEnumerable<User> GetUsers(string firstName, string lastName, int skip, int take);
         User GetUserById(Guid id);
         bool CreateUser(User user);
+        bool UpdateUser(User user);
     }
 }

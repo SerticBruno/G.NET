@@ -36,5 +36,12 @@ namespace Company.Intro.Services
 
             return userCreated;
         }
+
+        public bool UpdateUser(User user)
+        {
+            var userUpdated = _userRepository.UpdateUser(user);
+
+            return userUpdated;
+        }
     }
 }

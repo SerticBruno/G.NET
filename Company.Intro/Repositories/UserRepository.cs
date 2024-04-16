@@ -50,9 +50,11 @@ namespace Company.Intro.Repositories
             _context.Users.Remove(user);
         }
 
-        public void UpdateUser(User user)
+        public bool UpdateUser(User user)
         {
-            _context.Entry(user).State = EntityState.Modified;
+            _context.Users.Update(user);
+
+            return Save();
         }
 
         public bool Save()

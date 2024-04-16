@@ -16,7 +16,7 @@ namespace Company.Intro.Contracts
 
         void DeleteUser(int userId);
 
-        void UpdateUser(User user);
+        bool UpdateUser(User user);
 
         bool Save();
     }

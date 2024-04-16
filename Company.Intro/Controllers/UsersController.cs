@@ -60,12 +60,25 @@ namespace Company.Intro.Controllers
         {
             var userCreated = _userService.CreateUser(user);
 
-            if (userCreated)
+            if (!userCreated)
             {
                 return BadRequest(user);
             }
 
             return Ok(_mapper.Map<UserDto>(user));
+        }
+
+        [HttpPut]
+        public ActionResult<User> UpdateUser(User user)
+        {
+            var userUpdated = _userService.UpdateUser(user);
+
+            if (!userUpdated)
+            {
+                return BadRequest(user);
+            }
+
+            return Ok(user);
         }
     }
 }
