@@ -4,16 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Company.Intro.Repositories
 {
-    public class UserRepository : IUserRepository, IDisposable
+    public class UserRepository : IUserRepository
     {
         private readonly IntroDbContext _context;
-
-        private bool _disposed = false;
 
         public UserRepository(IntroDbContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
-
             _context = context;
         }
 
@@ -39,47 +36,9 @@ namespace Company.Intro.Repositories
 
         public bool CreateUser(User user)
         {
-            _context.Users.Add(user);
+            var user2 = _context.Users.Add(user);
 
-            return Save();
-        }
-
-        public bool DeleteUser(Guid userId)
-        {
-            User? user = _context.Users.FirstOrDefault(u => u.Id == userId);
-
-            if (user is null)
-            {
-                return false;
-            }
-
-            _context.Users.Remove(user);
-
-            return Save();
-        }
-
-        public bool UpdateUser(User user)
-        {
-            _context.Users.Update(user);
-
-            return Save();
-        }
-
-        public bool UserExists(Guid id)
-        {
-            var user = _context.Users.FirstOrDefault(u => u.Id == id);
-
-            if (user is null)
-                return false;
-
-            return true;
-        }
-
-        public bool Save()
-        {
-            var saved = _context.SaveChanges();
-
-            if (saved > 0)
+            if(user2 is not null)
             {
                 return true;
             }
@@ -87,23 +46,32 @@ namespace Company.Intro.Repositories
             return false;
         }
 
-        public virtual void Dispose(bool disposing)
+        public bool DeleteUser(Guid userId)
         {
-            if (!_disposed)
+            var user = _context.Users.Find(userId);
+            if (user == null)
             {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-
-                _disposed = true;
+                return false;
             }
+            _context.Users.Remove(user);
+            return true;
         }
 
-        public void Dispose()
+        public bool UpdateUser(User user)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            var usera = _context.Users.Update(user);
+
+            if (usera is not null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool UserExists(Guid id)
+        {
+            return _context.Users.Any(u => u.Id == id);
         }
     }
 }

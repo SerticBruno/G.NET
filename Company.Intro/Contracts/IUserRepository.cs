@@ -3,7 +3,7 @@ using Company.Intro.Models;
 
 namespace Company.Intro.Contracts
 {
-    public interface IUserRepository : IDisposable
+    public interface IUserRepository
     {
 
         IEnumerable<User> GetUsers();
@@ -19,7 +19,5 @@ namespace Company.Intro.Contracts
         bool DeleteUser(Guid userId);
         
         bool UserExists(Guid id);
-
-        bool Save();
     }
 }

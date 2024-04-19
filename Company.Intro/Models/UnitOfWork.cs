@@ -1,30 +1,31 @@
 ﻿using Company.Intro.Contracts;
 using Company.Intro.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace Company.Intro.Models
+public class UnitOfWork : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    private readonly IntroDbContext _context;
+    private IUserRepository _userRepository;
+
+    public UnitOfWork(IntroDbContext context)
     {
-        private readonly IntroDbContext _context;
+        _context = context;
+    }
+    public IUserRepository Users => _userRepository ??= new UserRepository(_context);
 
-        public UnitOfWork(IntroDbContext context)
-        {
-            _context = context;
-        }
+    public async Task<int> CommitAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
 
-        public void Commit()
-        {
-            _context.SaveChanges();
-        }
+    public void Rollback()
+    {
+        // EF Core rolls back transactions automatically if SaveChangesAsync throws an exception
+        // Otherwise, for manual rollback, you might need additional logic here
+    }
 
-
-        public void Rollback()
-        {
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }

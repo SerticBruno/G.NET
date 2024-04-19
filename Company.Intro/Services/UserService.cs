@@ -8,46 +8,62 @@ namespace Company.Intro.Services
 {
     public class UserService : IUserService
     {
-        public IUserRepository _userRepository { get; set; }
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public IEnumerable<User> GetUsers()
         {
-            return _userRepository.GetUsers();
+            return _unitOfWork.Users.GetUsers();
         }
 
         public IEnumerable<User> GetUsers(string firstName, string lastName, int skip, int take)
         {
-            return _userRepository.GetUsers(firstName, lastName, skip, take);
+            return _unitOfWork.Users.GetUsers(firstName, lastName, skip, take);
         }
 
         public User GetUserById(Guid id)
         {
-            return _userRepository.GetUserById(id);
+            return _unitOfWork.Users.GetUserById(id);
         }
 
         public bool CreateUser(User user)
         {
-            return _userRepository.CreateUser(user);
+            var created = _unitOfWork.Users.CreateUser(user);
+
+            if (created)
+            {
+                _unitOfWork.CommitAsync();
+            }
+            return created;
         }
 
         public bool UpdateUser(User user)
         {
-            return _userRepository.UpdateUser(user);
+            var updated = _unitOfWork.Users.UpdateUser(user);
+            if (updated)
+            {
+                _unitOfWork.CommitAsync();
+            }
+            return updated;
         }
 
         public bool DeleteUser(Guid id)
         {
-            return _userRepository.DeleteUser(id);
+            var deleted = _unitOfWork.Users.DeleteUser(id);
+            if (deleted)
+            {
+                _unitOfWork.CommitAsync();
+            }
+            return deleted;
         }
 
         public bool UserExists(Guid id)
         {
-            return _userRepository.UserExists(id);
+            return _unitOfWork.Users.UserExists(id);
         }
     }
 }

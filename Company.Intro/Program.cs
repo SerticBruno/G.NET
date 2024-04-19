@@ -23,6 +23,7 @@ namespace Company.Intro
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddDbContext<IntroDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -34,6 +35,8 @@ namespace Company.Intro
                 var db = scope.ServiceProvider.GetService<IntroDbContext>();
                 db.Database.Migrate();
             }
+
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -1,11 +1,13 @@
-﻿using Company.Intro.Repositories;
+﻿using Company.Intro.Models;
+using Company.Intro.Repositories;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Company.Intro.Contracts
 {
     public interface IUnitOfWork : IDisposable
     {
-        void Commit();
+        IUserRepository Users { get; }
+        Task<int> CommitAsync();
         void Rollback();
     }
 }
