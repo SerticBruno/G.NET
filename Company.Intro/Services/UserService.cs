@@ -32,16 +32,22 @@ namespace Company.Intro.Services
 
         public bool CreateUser(User user)
         {
-            var userCreated = _userRepository.CreateUser(user);
-
-            return userCreated;
+            return _userRepository.CreateUser(user);
         }
 
         public bool UpdateUser(User user)
         {
-            var userUpdated = _userRepository.UpdateUser(user);
+            return _userRepository.UpdateUser(user);
+        }
 
-            return userUpdated;
+        public bool DeleteUser(Guid id)
+        {
+            return _userRepository.DeleteUser(id);
+        }
+
+        public bool UserExists(Guid id)
+        {
+            return _userRepository.UserExists(id);
         }
     }
 }

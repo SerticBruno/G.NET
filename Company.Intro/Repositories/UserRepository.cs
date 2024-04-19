@@ -32,7 +32,7 @@ namespace Company.Intro.Repositories
                 .ToList();
         }
 
-        public User GetUserById(Guid userId)
+        public User? GetUserById(Guid userId)
         {
             return _context.Users.Find(userId);
         }
@@ -44,10 +44,18 @@ namespace Company.Intro.Repositories
             return Save();
         }
 
-        public void DeleteUser(int userId)
+        public bool DeleteUser(Guid userId)
         {
-            User user = _context.Users.Find(userId);
+            User? user = _context.Users.FirstOrDefault(u => u.Id == userId);
+
+            if (user is null)
+            {
+                return false;
+            }
+
             _context.Users.Remove(user);
+
+            return Save();
         }
 
         public bool UpdateUser(User user)
@@ -55,6 +63,16 @@ namespace Company.Intro.Repositories
             _context.Users.Update(user);
 
             return Save();
+        }
+
+        public bool UserExists(Guid id)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+
+            if (user is null)
+                return false;
+
+            return true;
         }
 
         public bool Save()
