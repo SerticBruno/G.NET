@@ -1,4 +1,6 @@
-﻿namespace Company.Intro.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Company.Intro.Models
 {
     public record User
     {

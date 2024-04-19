@@ -10,13 +10,15 @@ namespace Company.Intro.Contracts
 
         IEnumerable<User> GetUsers(string firstName, string lastName, int skip, int take);
 
-        User GetUserById(Guid userId);
+        User? GetUserById(Guid userId);
 
         bool CreateUser(User user);
 
-        void DeleteUser(int userId);
-
         bool UpdateUser(User user);
+
+        bool DeleteUser(Guid userId);
+        
+        bool UserExists(Guid id);
 
         bool Save();
     }

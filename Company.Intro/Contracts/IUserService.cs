@@ -11,5 +11,7 @@ namespace Company.Intro.Contracts
         User GetUserById(Guid id);
         bool CreateUser(User user);
         bool UpdateUser(User user);
+        bool DeleteUser(Guid id);
+        bool UserExists(Guid id);
     }
 }

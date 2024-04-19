@@ -5,6 +5,7 @@ using Company.Intro.Models;
 using Company.Intro.Repositories;
 using Company.Intro.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.Intro.Controllers
 {
@@ -69,16 +70,38 @@ namespace Company.Intro.Controllers
         }
 
         [HttpPut]
-        public ActionResult<User> UpdateUser(User user)
+        public ActionResult<User> UpdateUser(UserDto userDto)
         {
+            var user = _mapper.Map<User>(userDto);
+
             var userUpdated = _userService.UpdateUser(user);
 
             if (!userUpdated)
             {
                 return BadRequest(user);
             }
-
             return Ok(user);
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public ActionResult DeleteUser(Guid id)
+        {
+            if(!_userService.UserExists(id))
+            {
+                return NotFound($"No user with id: {id}");
+            }
+
+            var userDeleted = _userService.DeleteUser(id);
+
+            if (userDeleted)
+            {
+                return Ok("User deleted");
+            }
+
+            return BadRequest(id);
         }
     }
 }
