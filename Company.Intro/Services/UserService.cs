@@ -1,4 +1,5 @@
 ﻿using Company.Intro.Contracts;
+using Company.Intro.DTOs;
 using Company.Intro.Models;
 using Company.Intro.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -7,119 +8,64 @@ namespace Company.Intro.Services
 {
     public class UserService : IUserService
     {
-        public IntroDbContext _context { get; set; }
-        public DbSet<User>? Users { get; set; }
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(IntroDbContext context)
+        public UserService(IUnitOfWork unitOfWork)
         {
-            _context = context;
-        }
-        public async Task<User> GetUserAsync(Guid id)
-        {
-            if (_context is null)
-            {
-                throw new InvalidOperationException("Database context is not initialized.");
-            }
-
-            if (_context.Users is null)
-            {
-                throw new InvalidOperationException("Users DbSet is not initialized.");
-            }
-
-            var existingUser = await _context.Users.FindAsync(id);
-
-            if (existingUser is null)
-            {
-                throw new InvalidOperationException("User not found.");
-            }
-
-            return existingUser;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<User> CreateUserAsync(User user)
+        public IEnumerable<User> GetUsers()
         {
-            var newUser = new User
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Age = user.Age
-            };
-
-            if (_context is null)
-            {
-                throw new InvalidOperationException("Database context is not initialized.");
-            }
-
-            if (_context.Users is null)
-            {
-                throw new InvalidOperationException("Users DbSet is not initialized.");
-            }
-
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            return newUser;
+            return _unitOfWork.Users.GetUsers();
         }
 
-        public async Task<User> UpdateUserAsync(User updatedUser)
+        public IEnumerable<User> GetUsers(string firstName, string lastName, int skip, int take)
         {
-            if (_context is null)
-            {
-                throw new InvalidOperationException("Database context is not initialized.");
-            }
-
-            if (_context.Users is null)
-            {
-                throw new InvalidOperationException("Users DbSet is not initialized.");
-            }
-
-            var existingUser = await _context.Users.FindAsync(updatedUser.Id);
-
-            if (existingUser is null)
-            {
-                // Handle the case where the user to update does not exist.
-                // You can throw an exception or return an appropriate response.
-                throw new InvalidOperationException("User not found.");
-            }
-
-            // Update the user properties.
-            existingUser.FirstName = updatedUser.FirstName;
-            existingUser.LastName = updatedUser.LastName;
-            existingUser.Age = updatedUser.Age;
-
-            // Save the changes to the database.
-            await _context.SaveChangesAsync();
-
-            return existingUser;
+            return _unitOfWork.Users.GetUsers(firstName, lastName, skip, take);
         }
 
-        public async Task<bool> DeleteUserAsync(Guid userId)
+        public User GetUserById(Guid id)
         {
-            if (_context is null)
+            return _unitOfWork.Users.GetUserById(id);
+        }
+
+        public bool CreateUser(User user)
+        {
+            var created = _unitOfWork.Users.CreateUser(user);
+
+            if (!created)
             {
-                throw new InvalidOperationException("Database context is not initialized.");
+                return false;
             }
+            
+            _unitOfWork.CommitAsync();
+            return true;
+        }
 
-            if (_context.Users is null)
+        public bool UpdateUser(User user)
+        {
+            var updated = _unitOfWork.Users.UpdateUser(user);
+            if (updated)
             {
-                throw new InvalidOperationException("Users DbSet is not initialized.");
+                _unitOfWork.CommitAsync();
             }
+            return updated;
+        }
 
-            var existingUser = await _context.Users.FindAsync(userId);
-
-            if (existingUser is null)
+        public bool DeleteUser(Guid id)
+        {
+            var deleted = _unitOfWork.Users.DeleteUser(id);
+            if (deleted)
             {
-                // Handle the case where the user to update does not exist.
-                // You can throw an exception or return an appropriate response.
-                throw new InvalidOperationException("User not found.");
+                _unitOfWork.CommitAsync();
             }
+            return deleted;
+        }
 
-            _context.Users.Remove(existingUser);
-
-            int result = await _context.SaveChangesAsync();
-
-            return result == 1;
+        public bool UserExists(Guid id)
+        {
+            return _unitOfWork.Users.UserExists(id);
         }
     }
 }

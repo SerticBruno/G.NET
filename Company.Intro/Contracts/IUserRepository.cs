@@ -1,17 +1,23 @@
 ﻿using Company.Intro.DTOs;
 using Company.Intro.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Company.Intro.Contracts
 {
-    public interface IUserService
+    public interface IUserRepository
     {
+
         IEnumerable<User> GetUsers();
+
         IEnumerable<User> GetUsers(string firstName, string lastName, int skip, int take);
-        User GetUserById(Guid id);
+
+        User? GetUserById(Guid userId);
+
         bool CreateUser(User user);
+
         bool UpdateUser(User user);
-        bool DeleteUser(Guid id);
+
+        bool DeleteUser(Guid userId);
+        
         bool UserExists(Guid id);
     }
 }
