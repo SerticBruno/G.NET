@@ -34,11 +34,13 @@ namespace Company.Intro.Services
         {
             var created = _unitOfWork.Users.CreateUser(user);
 
-            if (created)
+            if (!created)
             {
-                _unitOfWork.CommitAsync();
+                return false;
             }
-            return created;
+            
+            _unitOfWork.CommitAsync();
+            return true;
         }
 
         public bool UpdateUser(User user)

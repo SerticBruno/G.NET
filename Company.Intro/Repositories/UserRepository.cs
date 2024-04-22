@@ -36,9 +36,14 @@ namespace Company.Intro.Repositories
 
         public bool CreateUser(User user)
         {
-            var user2 = _context.Users.Add(user);
+            if (_context.Users.Any(u => u.Id == user.Id))
+            {
+                return false; // User with this ID already exists
+            }
 
-            if(user2 is not null)
+            var createdUser = _context.Users.Add(user);
+
+            if(createdUser is not null)
             {
                 return true;
             }

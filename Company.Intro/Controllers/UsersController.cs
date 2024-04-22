@@ -23,6 +23,7 @@ namespace Company.Intro.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(User), 200)]
         public ActionResult<IEnumerable<UserDto>> GetUsers()
         {
             var users = _mapper.Map<List<UserDto>>(_userService.GetUsers());
@@ -31,6 +32,8 @@ namespace Company.Intro.Controllers
         }
 
         [HttpGet("search")]
+        [ProducesResponseType(typeof(User), 200)]
+        [ProducesResponseType(typeof(User), 400)]
         public ActionResult<IEnumerable<User>> GetUsers([FromQuery] string firstName, [FromQuery] string lastName, [FromQuery] int skip = 0, [FromQuery] int take = 10)
         {
             var users = _mapper.Map<List<UserDto>>(_userService.GetUsers(firstName, lastName, skip, take));
@@ -44,6 +47,8 @@ namespace Company.Intro.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(User), 200)]
+        [ProducesResponseType(typeof(User), 404)]
         public ActionResult<User> GetById(Guid id)
         {
             var user = _mapper.Map<UserDto>(_userService.GetUserById(id));
@@ -57,8 +62,18 @@ namespace Company.Intro.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(UserDto), 200)]
+        [ProducesResponseType(typeof(UserDto), 400)]
+        [ProducesResponseType(typeof(UserDto), 409)]
         public ActionResult<UserDto> CreateUser(User user)
         {
+            var userExists = _userService.UserExists(user.Id);
+
+            if (userExists)
+            {
+                return Conflict("User with that id already exists");
+            }
+
             var userCreated = _userService.CreateUser(user);
 
             if (!userCreated)
@@ -70,6 +85,9 @@ namespace Company.Intro.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(typeof(UserDto), 200)]
+        [ProducesResponseType(typeof(UserDto), 400)]
+        [ProducesResponseType(typeof(UserDto), 409)]
         public ActionResult<User> UpdateUser(UserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
