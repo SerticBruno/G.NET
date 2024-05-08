@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using Company.Intro.Contracts;
-using Company.Intro.DTOs;
-using Company.Intro.Models;
-using Company.Intro.Repositories;
-using Company.Intro.Services;
+using Company.Intro.Application.Contracts;
+using Company.Intro.Application.Contracts.Models;
+using Company.Intro.Infrastructure.Contracts.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Company.Intro.Controllers
 {
@@ -24,9 +21,9 @@ namespace Company.Intro.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(User), 200)]
-        public ActionResult<IEnumerable<UserDto>> GetUsers()
+        public async Task<ActionResult<List<UserDto>>> GetUsers(CancellationToken cancellation)
         {
-            var users = _mapper.Map<List<UserDto>>(_userService.GetUsers());
+            var users = await _userService.GetUsers(cancellation);
 
             return Ok(users);
         }
@@ -52,7 +49,7 @@ namespace Company.Intro.Controllers
         public ActionResult<User> GetById(Guid id)
         {
             var user = _mapper.Map<UserDto>(_userService.GetUserById(id));
-            
+
             if (user is null)
             {
                 return NotFound();
@@ -65,17 +62,11 @@ namespace Company.Intro.Controllers
         [ProducesResponseType(typeof(UserDto), 200)]
         [ProducesResponseType(typeof(UserDto), 400)]
         [ProducesResponseType(typeof(UserDto), 409)]
-        public ActionResult<UserDto> CreateUser(User user)
+        public ActionResult<UserDto> CreateUser(UserDto user)
         {
-            var userExists = _userService.UserExists(user.Id);
-
-            if (userExists)
-            {
-                return Conflict("User with that id already exists");
-            }
-
             var userCreated = _userService.CreateUser(user);
 
+            
             if (!userCreated)
             {
                 return BadRequest(user);
@@ -90,15 +81,14 @@ namespace Company.Intro.Controllers
         [ProducesResponseType(typeof(UserDto), 409)]
         public ActionResult<User> UpdateUser(UserDto userDto)
         {
-            var user = _mapper.Map<User>(userDto);
 
-            var userUpdated = _userService.UpdateUser(user);
+            var userUpdated = _userService.UpdateUser(userDto);
 
             if (!userUpdated)
             {
-                return BadRequest(user);
+                return BadRequest();
             }
-            return Ok(user);
+            return Ok(userUpdated);
         }
 
         [HttpDelete]
@@ -107,7 +97,7 @@ namespace Company.Intro.Controllers
         [ProducesResponseType(404)]
         public ActionResult DeleteUser(Guid id)
         {
-            if(!_userService.UserExists(id))
+            if (!_userService.UserExists(id))
             {
                 return NotFound($"No user with id: {id}");
             }
